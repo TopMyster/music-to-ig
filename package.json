@@ -1,0 +1,17 @@
+{
+  "name": "music-to-ig-bio",
+  "version": "1.0.0",
+  "description": "Updates Instagram bio with currently playing track from Last.fm (supports Spotify, Apple Music, SoundCloud, etc)",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.15.2",
+    "dotenv": "^17.4.2",
+    "instagram-private-api": "^1.46.1"
+  }
+}
