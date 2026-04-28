@@ -15,11 +15,17 @@ updates your instagram bio with whatever you're currently listening to. uses las
 
 ## usage
 
-if it's your first time or ig is blocking the login, run the checkpoint solver first:
-`node solve_checkpoint.js` (it'll ask for the code sent to your email/sms).
+**Step 1: Generate your session**
+You **MUST** run the checkpoint solver first before starting the main script. This mimics a modern Instagram app version and generates a valid `session.json` file.
+```bash
+node solve_checkpoint.js
+```
+*(If Instagram requires verification, it will ask for a 6-digit code sent to your email/SMS. Once it says "Session saved", proceed to Step 2).*
 
-then start the main script:
-`node script.js`
+**Step 2: Start the tracker**
+```bash
+node script.js
+```
 
 it will check what you're playing every minute and update your bio. when you stop listening, it clears it to a "not playing anything" message.
 

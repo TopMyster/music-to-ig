@@ -15,6 +15,13 @@ async function initInstagram() {
     try {
         ig.state.generateDevice(process.env.IG_USERNAME);
         
+        // Override the app version to bypass the "unsupported_version" block
+        ig.state.appVersion = '320.0.0.42.100';
+        ig.state.appVersionCode = '555000000';
+        Object.defineProperty(ig.state, 'appUserAgent', {
+            get: () => `Instagram 320.0.0.42.100 Android (${ig.state.deviceString}; ${ig.state.language}; 555000000)`
+        });
+        
         if (fs.existsSync('session.json')) {
             const savedState = await fs.promises.readFile('session.json', 'utf8');
             await ig.state.deserialize(savedState);
@@ -46,7 +53,7 @@ async function getCurrentlyPlaying() {
         if (track && track['@attr'] && track['@attr'].nowplaying === 'true') {
             const artist = track.artist['#text'];
             const title = track.name;
-            return `${title} by ${artist}`;
+            return `${title} — ${artist}`;
         }
         return null;
     } catch (error) {
@@ -62,7 +69,17 @@ async function updateInstagramBio(bioText) {
         await ig.account.setBiography(bioText);
         console.log(`Updated Instagram bio: "${bioText}"`);
     } catch (error) {
-        console.error("Failed to update Instagram bio:", error.message);
+        if (error.message && error.message.includes('checkpoint_required')) {
+            console.error("\n🚨 Checkpoint required! Instagram has flagged this login/activity.");
+            console.error("👉 Please stop this script and run: node solve_checkpoint.js");
+            process.exit(1);
+        } else if (error.message && error.message.includes('login_required')) {
+            console.error("\n🚨 Session expired or login required! Instagram rejected the current session.");
+            console.error("👉 Please stop this script and run: node solve_checkpoint.js");
+            process.exit(1);
+        } else {
+            console.error("Failed to update Instagram bio:", error.message);
+        }
     }
 }
 
@@ -75,7 +92,7 @@ async function pollLoop() {
             console.log(`New track detected: ${playing}`);
             currentSong = playing;
 
-            const bioText = `Currently playing: ${playing}`;
+            const bioText = `🎧 Now playing: ${playing} 🎶`;
 
             await updateInstagramBio(bioText);
         }
@@ -84,7 +101,7 @@ async function pollLoop() {
             console.log("Music stopped playing.");
             currentSong = null;
 
-            const bioText = "Not currently playing anything.";
+            const bioText = "☁️ Taking a music break";
 
             await updateInstagramBio(bioText);
         }
