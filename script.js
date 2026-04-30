@@ -3,7 +3,7 @@ const axios = require('axios');
 const { IgApiClient } = require('instagram-private-api');
 const fs = require('fs');
 
-const POLLING_INTERVAL = 60 * 1000;
+const POLLING_INTERVAL = 5 * 1000;
 const LASTFM_USERNAME = process.env.LASTFM_USERNAME;
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 
